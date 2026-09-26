@@ -1,2 +1,12 @@
-# lark-color-swatches
-飞书多维表格单选标签完整色值对照表与可视化查询工具，支持一键导出 JSON 色值映射。| Complete color reference &amp; visual lookup tool for Feishu (Lark) Base single-select tags, with one-click JSON export.
+# 飞书单选标签色值对照表
+
+本仓库整理了飞书多维表格单选字段的全部 55 种原生标签颜色（5 档色阶 × 11 种色相），提供可视化 HTML 查询工具与标准 JSON 色值映射数据，方便开发者快速查阅、复制色值，并直接集成到飞书二次开发项目中。
+
+## ✨ 特性
+
+- 完整覆盖飞书原生 55 个单选标签颜色 ID 与对应十六进制色值
+- 可视化网格表格对照，行列与飞书官方色板完全对应
+- 支持按颜色 ID、HEX 色值、标签名模糊搜索
+- 点击色块一键复制十六进制色值
+- 一键导出标准 JSON 格式色值映射文件，可直接被程序读取调用
+- 纯静态前端页面，无任何依赖，离线即可使用
