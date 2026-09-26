@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>飞书单选标签色板对照表</title>
+<style>
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; 
+}
+body { 
+    background: #fff; 
+    padding: 30px; 
+}
+.header {
+    max-width: 1400px;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2329;
+}
+.export-btn {
+    padding: 8px 16px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #1f2329;
+    transition: background-color .2s;
+}
+.export-btn:hover {
+    background: #f9fafb;
+}
+table { 
+    border-collapse: collapse; 
+    width: 100%; 
+    max-width: 1400px; 
+    margin: 0 auto; 
+    text-align: center; 
+}
+th, td { 
+    border: 1px solid #e5e7eb; 
+    padding: 12px 8px; 
+}
+th { 
+    background: #f9fafb; 
+    font-weight: 500; 
+    font-size: 14px; 
+    color: #4e5969; 
+}
+.row-header { 
+    background: #f9fafb; 
+    font-weight: 500; 
+    font-size: 13px; 
+    color: #4e5969; 
+    width: 100px; 
+}
+.swatch { 
+    width: 48px; 
+    height: 48px; 
+    border-radius: 8px; 
+    margin: 0 auto 8px; 
+    border: 1px solid #eee; 
+}
+.color-id { 
+    font-size: 12px; 
+    color: #1f2329; 
+    margin-bottom: 2px; 
+}
+.color-hex { 
+    font-size: 11px; 
+    color: #86909c; 
+    font-family: Consolas, Menlo, monospace; 
+    text-transform: uppercase; 
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>飞书多维表格单选标签颜色对照表</h1>
+    <button id="exportBtn" class="export-btn">导出 JSON 文件</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th class="row-header">色阶</th>
+      <th>列1 红</th>
+      <th>列2 橙</th>
+      <th>列3 黄</th>
+      <th>列4 黄绿</th>
+      <th>列5 绿</th>
+      <th>列6 青</th>
+      <th>列7 蓝</th>
+      <th>列8 靛蓝</th>
+      <th>列9 粉</th>
+      <th>列10 紫</th>
+      <th>列11 灰</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+<script>
+// 统一颜色数据源（表格与导出共用）
+const colorData = [
+    // 第1行 - 标准色
+    { row: 1, rowName: '标准色', col: 1, id: 22, hex: '#FF7875' },
+    { row: 1, rowName: '标准色', col: 2, id: 23, hex: '#FF9C42' },
+    { row: 1, rowName: '标准色', col: 3, id: 24, hex: '#FFD338' },
+    { row: 1, rowName: '标准色', col: 4, id: 25, hex: '#A2C10B' },
+    { row: 1, rowName: '标准色', col: 5, id: 26, hex: '#36C66C' },
+    { row: 1, rowName: '标准色', col: 6, id: 27, hex: '#23C4B4' },
+    { row: 1, rowName: '标准色', col: 7, id: 28, hex: '#38A1F0' },
+    { row: 1, rowName: '标准色', col: 8, id: 29, hex: '#698BFF' },
+    { row: 1, rowName: '标准色', col: 9, id: 30, hex: '#F075B8' },
+    { row: 1, rowName: '标准色', col: 10, id: 31, hex: '#B078F2' },
+    { row: 1, rowName: '标准色', col: 11, id: 32, hex: '#868C95' },
+
+    // 第2行 - 极浅色
+    { row: 2, rowName: '极浅色', col: 1, id: 5, hex: '#FFD1CD' },
+    { row: 2, rowName: '极浅色', col: 2, id: 1, hex: '#FFE2CC' },
+    { row: 2, rowName: '极浅色', col: 3, id: 3, hex: '#FFF2BC' },
+    { row: 2, rowName: '极浅色', col: 4, id: 9, hex: '#E7F2B3' },
+    { row: 2, rowName: '极浅色', col: 5, id: 7, hex: '#CDF4D9' },
+    { row: 2, rowName: '极浅色', col: 6, id: 4, hex: '#C2EFEC' },
+    { row: 2, rowName: '极浅色', col: 7, id: 2, hex: '#D0E8FC' },
+    { row: 2, rowName: '极浅色', col: 8, id: 0, hex: '#D8E1FF' },
+    { row: 2, rowName: '极浅色', col: 9, id: 8, hex: '#FCD8E9' },
+    { row: 2, rowName: '极浅色', col: 10, id: 6, hex: '#E9D8FC' },
+    { row: 2, rowName: '极浅色', col: 11, id: 10, hex: '#E8EAED' },
+
+    // 第3行 - 浅色
+    { row: 3, rowName: '浅色', col: 1, id: 11, hex: '#FFB0A7' },
+    { row: 3, rowName: '浅色', col: 2, id: 12, hex: '#FFBC99' },
+    { row: 3, rowName: '浅色', col: 3, id: 13, hex: '#FFE68C' },
+    { row: 3, rowName: '浅色', col: 4, id: 14, hex: '#C8DD5F' },
+    { row: 3, rowName: '浅色', col: 5, id: 15, hex: '#88DDAA' },
+    { row: 3, rowName: '浅色', col: 6, id: 16, hex: '#71D4CB' },
+    { row: 3, rowName: '浅色', col: 7, id: 17, hex: '#72B8F7' },
+    { row: 3, rowName: '浅色', col: 8, id: 18, hex: '#94ADFF' },
+    { row: 3, rowName: '浅色', col: 9, id: 19, hex: '#F597C4' },
+    { row: 3, rowName: '浅色', col: 10, id: 20, hex: '#C498F5' },
+    { row: 3, rowName: '浅色', col: 11, id: 21, hex: '#B4B9C1' },
+
+    // 第4行 - 深色
+    { row: 4, rowName: '深色', col: 1, id: 33, hex: '#ED3C3C' },
+    { row: 4, rowName: '深色', col: 2, id: 34, hex: '#F77217' },
+    { row: 4, rowName: '深色', col: 3, id: 35, hex: '#D49400' },
+    { row: 4, rowName: '深色', col: 4, id: 36, hex: '#738C00' },
+    { row: 4, rowName: '深色', col: 5, id: 37, hex: '#009F45' },
+    { row: 4, rowName: '深色', col: 6, id: 38, hex: '#00988B' },
+    { row: 4, rowName: '深色', col: 7, id: 39, hex: '#007BCD' },
+    { row: 4, rowName: '深色', col: 8, id: 40, hex: '#2B5BDB' },
+    { row: 4, rowName: '深色', col: 9, id: 41, hex: '#D63884' },
+    { row: 4, rowName: '深色', col: 10, id: 42, hex: '#9342D8' },
+    { row: 4, rowName: '深色', col: 11, id: 43, hex: '#5C626B' },
+
+    // 第5行 - 极深色
+    { row: 5, rowName: '极深色', col: 1, id: 44, hex: '#C42828' },
+    { row: 5, rowName: '极深色', col: 2, id: 45, hex: '#D45D0E' },
+    { row: 5, rowName: '极深色', col: 3, id: 46, hex: '#B37C00' },
+    { row: 5, rowName: '极深色', col: 4, id: 47, hex: '#5C7000' },
+    { row: 5, rowName: '极深色', col: 5, id: 48, hex: '#008038' },
+    { row: 5, rowName: '极深色', col: 6, id: 49, hex: '#00796E' },
+    { row: 5, rowName: '极深色', col: 7, id: 50, hex: '#0067AD' },
+    { row: 5, rowName: '极深色', col: 8, id: 51, hex: '#224AB3' },
+    { row: 5, rowName: '极深色', col: 9, id: 52, hex: '#B82E72' },
+    { row: 5, rowName: '极深色', col: 10, id: 53, hex: '#7C36B5' },
+    { row: 5, rowName: '极深色', col: 11, id: 54, hex: '#444950' }
+];
+
+// 动态渲染表格
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    const rowGroups = {};
+
+    // 按行分组
+    colorData.forEach(item => {
+        if (!rowGroups[item.row]) {
+            rowGroups[item.row] = { name: item.rowName, cells: [] };
+        }
+        rowGroups[item.row].cells[item.col - 1] = item;
+    });
+
+    // 按行号顺序生成
+    Object.keys(rowGroups).sort((a, b) => a - b).forEach(rowNum => {
+        const { name, cells } = rowGroups[rowNum];
+        const tr = document.createElement('tr');
+
+        // 行标题
+        const rowHead = document.createElement('td');
+        rowHead.className = 'row-header';
+        rowHead.innerHTML = `第${rowNum}行<br>${name}`;
+        tr.appendChild(rowHead);
+
+        // 颜色单元格
+        cells.forEach(item => {
+            const td = document.createElement('td');
+            td.innerHTML = `
+                <div class="swatch" style="background:${item.hex}"></div>
+                <div class="color-id">ID: ${item.id}</div>
+                <div class="color-hex">${item.hex}</div>
+            `;
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+}
+
+// 导出 JSON 文件
+function exportJSON() {
+    // 转换为 { colorId: hexValue } 键值对格式
+    const colorMap = {};
+    colorData.forEach(item => {
+        colorMap[item.id] = item.hex;
+    });
+
+    const jsonString = JSON.stringify(colorMap, null, 2);
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'feishu-select-colors.json';
+    document.body.appendChild(link);
+    link.click();
+    
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// 初始化
+renderTable();
+document.getElementById('exportBtn').addEventListener('click', exportJSON);
+</script>
+
+</body>
+</html>
